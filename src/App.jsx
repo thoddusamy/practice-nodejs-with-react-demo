@@ -7,6 +7,8 @@ function App() {
   const [users, setUsers] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [editUser, setEditUser] = useState({});
+  const [passwordShown, setPasswordShown] = useState(false);
+  const [inputPassShown, setInputpassShown] = useState(false);
 
   let fetchData = async () => {
     try {
@@ -32,12 +34,14 @@ function App() {
           await axios.post('https://practice-nodejs-demo.herokuapp.com/student', values);
           fetchData();
           resetForm({ values: '' })
+          setInputpassShown(false)
         } else {
           delete values._id
           await axios.put(`https://practice-nodejs-demo.herokuapp.com/student/${editUser._id}`, values);
           setIsEdit(false);
           fetchData();
           resetForm({ values: '' })
+          setInputpassShown(false)
         }
       } catch (error) {
         alert('Error!');
@@ -67,6 +71,19 @@ function App() {
       alert('Error!');
     }
   }
+
+  let handlePassShown = () => {
+    if (passwordShown == false) {
+      setPasswordShown(true);
+    } else {
+      setPasswordShown(false);
+    }
+  }
+
+  let handleInputPassShown = () => {
+    inputPassShown == false ? setInputpassShown(true) : setInputpassShown(false);
+  }
+
   return (
     <div className="container">
       <div className="row mt-4">
@@ -76,8 +93,10 @@ function App() {
             <input type="text" name='email' value={formik.values.email} onChange={formik.handleChange}
               className='form-control' />
             <label>Password:</label>
-            <input type="password" name='password' value={formik.values.password} onChange={formik.handleChange}
-              className='form-control' />
+            <div className='input-eye'>
+              <input type={inputPassShown ? 'text' : "password"} name='password' value={formik.values.password} onChange={formik.handleChange}
+                className='form-control' /> <span><i onClick={handleInputPassShown} className={inputPassShown ? 'fa-solid fa-eye' : "fa-solid fa-eye-slash"}></i></span>
+            </div>
             <div className="col-lg-12 mt-2">
               <button className='btn btn-success' type='submit'>Submit</button>
             </div>
@@ -100,7 +119,8 @@ function App() {
                     <tr key={index}>
                       <th scope="row">{item._id}</th>
                       <td>{item.email}</td>
-                      <td>{item.password}</td>
+                      <td><input className='eye-icon' type={passwordShown ? 'text' : "password"} value={item.password} readOnly />
+                        <i style={{ cursor: 'pointer' }} onClick={handlePassShown} className={passwordShown ? 'fa-solid fa-eye' : "fa-solid fa-eye-slash"}></i></td>
                       <td>
                         <button className='btn btn-warning me-1' onClick={() => handleEdit(item._id)}>Edit</button>
                         <button className='btn btn-danger' onClick={() => handleDelete(item._id)}>Delete</button>
