@@ -13,7 +13,7 @@ function App() {
   let fetchData = async () => {
     try {
       let response = await axios.get('https://practice-nodejs-demo.herokuapp.com/students')
-      setUsers(response.data);
+      setUsers(response.data); 
     } catch (error) {
       alert('Error!');
     }
